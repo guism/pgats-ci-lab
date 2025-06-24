@@ -1,0 +1,35 @@
+# azure-pipelines.yml
+trigger:
+- main  # Altere para o branch que deseja disparar o pipeline automaticamente (se necessário)
+
+pr:
+- main  # Altere para o branch onde deseja executar PR Validation
+
+# Pipeline e suas etapas
+jobs:
+- job: E2ETests
+  pool:
+    vmImage: 'ubuntu-latest'  # Máquina que o job vai executar
+  steps:
+  - checkout: self  # Clone do Repositório
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: 'latest'  # Instalação do Node.js
+    displayName: 'Install Node.js'
+
+  - script: |
+      npm install -g yarn  # Instalação do Yarn
+    displayName: 'Install Yarn'
+
+  - script: |
+      yarn  # Instalação das dependências
+    displayName: 'Install Dependencies'
+
+  - script: |
+      yarn playwright install  # Instalação do Playwright
+    displayName: 'Install Playwright'
+
+  - script: |
+      yarn run e2e  # Executar os testes E2E
+    displayName: 'Run E2E Tests'
